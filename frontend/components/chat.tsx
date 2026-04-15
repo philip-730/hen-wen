@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChevronDown, ChevronUp, Send } from 'lucide-react'
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8000'
 const CHAR_DELAY_MS = 12
 
 interface Message {
@@ -170,7 +169,7 @@ export default function Chat() {
     const assistantIndex = messages.length + 1
 
     try {
-      const res = await fetch(`${BACKEND}/chat`, {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage, history }),
