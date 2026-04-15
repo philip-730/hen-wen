@@ -16,5 +16,16 @@ backend/__pycache__/
 backend/**/__pycache__/
 backend/**/*.pyc
 
+# Terraform
+infrastructure/.terraform/
+infrastructure/.terraform.lock.hcl
+infrastructure/terraform.tfvars
+infrastructure/*.tfstate
+infrastructure/*.tfstate.backup
+
+# Docker
+backend/.dockerignore
+frontend/.dockerignore
+
 # General
 .DS_Store
