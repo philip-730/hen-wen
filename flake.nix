@@ -64,7 +64,8 @@
 
           # Run `nix build .#frontend-image` with this as lib.fakeHash,
           # then replace with the hash from the error message.
-          npmDepsHash = "sha256-Ap1UAxiCEFz8cyWCVqayXTEFfQSLOJNsm9qEsk1hl64="; ##pkgs.lib.fakeHash;
+          npmDepsHash = "sha256-3ZRm+M/gprLcbRhlOpKXv0RsfxoR/M7N5tNOQFpvrhg=";
+          # npmDepsHash =  pkgs.lib.fakeHash;
 
           NEXT_TELEMETRY_DISABLED = "1";
 

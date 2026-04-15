@@ -1,3 +1,6 @@
+default:
+    @just --list
+
 project      := "skeleton-island"
 region       := "us-central1"
 registry     := region + "-docker.pkg.dev/" + project + "/hen-wen"

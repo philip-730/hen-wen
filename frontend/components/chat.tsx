@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, memo } from 'react'
 import { flushSync } from 'react-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChevronDown, ChevronUp, Send } from 'lucide-react'
+import { DataChart, type ChartSpec } from '@/components/data-chart'
 
 const CHAR_DELAY_MS = 12
 
@@ -18,6 +19,7 @@ interface Message {
   sql?: string
   rows?: Record<string, string>[]
   totalRows?: number
+  charts?: ChartSpec[]
 }
 
 const PREVIEW_ROWS = 10
@@ -78,9 +80,9 @@ function SqlPill({ sql, rows, totalRows }: { sql: string; rows?: Record<string, 
   )
 }
 
-function AssistantMessage({ content, sql, rows, totalRows, isStreaming }: { content: string; sql?: string; rows?: Record<string, string>[]; totalRows?: number; isStreaming: boolean }) {
+const AssistantMessage = memo(function AssistantMessage({ content, sql, rows, totalRows, charts, isStreaming }: { content: string; sql?: string; rows?: Record<string, string>[]; totalRows?: number; charts?: ChartSpec[]; isStreaming: boolean }) {
   return (
-    <div className="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm bg-muted text-foreground">
+    <div className={`${charts?.length ? 'w-full' : 'max-w-[80%]'} rounded-2xl px-4 py-2.5 text-sm bg-muted text-foreground`}>
       {content
         ? (
           <ReactMarkdown
@@ -105,24 +107,29 @@ function AssistantMessage({ content, sql, rows, totalRows, isStreaming }: { cont
         : isStreaming
           ? <span className="text-muted-foreground animate-pulse">···</span>
           : null}
+      {charts && rows && charts.map((chart, i) => <DataChart key={i} spec={chart} rows={rows} />)}
       {sql && <SqlPill sql={sql} rows={rows} totalRows={totalRows} />}
     </div>
   )
-}
+})
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const latestAssistantRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const charQueue = useRef<string[]>([])
   const animating = useRef(false)
+  const prevMessageCount = useRef(0)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, status])
+    if (messages.length > prevMessageCount.current) {
+      prevMessageCount.current = messages.length
+      latestAssistantRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [messages])
 
   function drainQueue(index: number) {
     if (charQueue.current.length === 0) {
@@ -209,6 +216,12 @@ export default function Chat() {
               updated[assistantIndex] = { ...updated[assistantIndex], rows: event.rows, totalRows: event.total }
               return updated
             })
+          } else if (event.type === 'chart') {
+            setMessages(prev => {
+              const updated = [...prev]
+              updated[assistantIndex] = { ...updated[assistantIndex], charts: event.configs }
+              return updated
+            })
           } else if (event.type === 'error') {
             setMessages(prev => {
               const updated = [...prev]
@@ -251,7 +264,7 @@ export default function Chat() {
             </p>
           )}
           {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={i} ref={msg.role === 'assistant' && i === messages.length - 1 ? latestAssistantRef : undefined} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'user'
                 ? (
                   <div className="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm bg-primary text-primary-foreground">
@@ -264,6 +277,7 @@ export default function Chat() {
                     sql={msg.sql}
                     rows={msg.rows}
                     totalRows={msg.totalRows}
+                    charts={msg.charts}
                     isStreaming={loading && i === messages.length - 1}
                   />
                 )}
@@ -272,7 +286,7 @@ export default function Chat() {
           {status && (
             <p className="text-center text-xs text-muted-foreground animate-pulse">{status}</p>
           )}
-          <div ref={bottomRef} />
+
         </div>
       </ScrollArea>
 
