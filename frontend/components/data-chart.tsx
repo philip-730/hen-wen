@@ -70,7 +70,7 @@ export const DataChart = memo(function DataChart({ spec, rows }: { spec: ChartSp
 
   function wrap(chart: React.ReactNode) {
     return (
-      <div className="mt-3">
+      <div className="mt-3 w-full">
         {safeSpec.title && <p className="text-xs font-medium text-muted-foreground mb-1">{safeSpec.title}</p>}
         {chart}
       </div>

@@ -82,7 +82,7 @@ function SqlPill({ sql, rows, totalRows }: { sql: string; rows?: Record<string, 
 
 const AssistantMessage = memo(function AssistantMessage({ content, sql, rows, totalRows, charts, isStreaming }: { content: string; sql?: string; rows?: Record<string, string>[]; totalRows?: number; charts?: ChartSpec[]; isStreaming: boolean }) {
   return (
-    <div className={`${charts?.length ? 'w-full' : 'max-w-[80%]'} rounded-2xl px-4 py-2.5 text-sm bg-muted text-foreground`}>
+    <div className="w-full overflow-hidden rounded-2xl px-4 py-2.5 text-sm bg-muted text-foreground">
       {content
         ? (
           <ReactMarkdown
@@ -256,7 +256,7 @@ export default function Chat() {
         <p className="text-xs text-muted-foreground">skeleton-island.pokemon.all · BigQuery</p>
       </header>
 
-      <ScrollArea className="flex-1 min-h-0 px-6 py-4">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 py-4">
         <div className="max-w-3xl mx-auto space-y-4">
           {messages.length === 0 && (
             <p className="text-center text-sm text-muted-foreground py-16">
@@ -264,7 +264,7 @@ export default function Chat() {
             </p>
           )}
           {messages.map((msg, i) => (
-            <div key={i} ref={msg.role === 'assistant' && i === messages.length - 1 ? latestAssistantRef : undefined} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={i} ref={msg.role === 'assistant' && i === messages.length - 1 ? latestAssistantRef : undefined} className={`flex min-w-0 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'user'
                 ? (
                   <div className="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm bg-primary text-primary-foreground">
@@ -288,7 +288,7 @@ export default function Chat() {
           )}
 
         </div>
-      </ScrollArea>
+      </div>
 
       <div className="shrink-0 border-t px-6 py-4">
         <div className="max-w-3xl mx-auto flex gap-2">
