@@ -24,7 +24,7 @@ app.add_middleware(
 claude = anthropic.AsyncAnthropic()
 bq = bigquery.Client()
 
-MAX_BYTES = 100 * 1024 * 1024  # 100 MB (table is 0.12 MB, this is a non-issue)
+MAX_BYTES = 100 * 1024 * 1024  # 100 MB (table is ~0.12 MB, this is a non-issue)
 
 SCHEMA = """
 There is one table: banzai-pipeline.pokemon.all
