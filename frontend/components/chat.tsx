@@ -253,7 +253,7 @@ export default function Chat() {
     <div className="flex flex-col h-screen">
       <header className="shrink-0 border-b px-6 py-4">
         <h1 className="font-semibold">Hen Wen</h1>
-        <p className="text-xs text-muted-foreground">skeleton-island.pokemon.all · BigQuery</p>
+        <p className="text-xs text-muted-foreground">banzai-pipeline.pokemon.all · BigQuery</p>
       </header>
 
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-6 py-4">

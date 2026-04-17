@@ -27,7 +27,7 @@ bq = bigquery.Client()
 MAX_BYTES = 100 * 1024 * 1024  # 100 MB (table is 0.12 MB, this is a non-issue)
 
 SCHEMA = """
-There is one table: skeleton-island.pokemon.all
+There is one table: banzai-pipeline.pokemon.all
 
 Columns:
 - ID (INTEGER) — Pokedex number
@@ -54,7 +54,7 @@ Your response must be EITHER:
 - The exact string: CANNOT_ANSWER
 
 Rules for SQL:
-- Always use the fully qualified table name: skeleton-island.pokemon.all
+- Always use the fully qualified table name: banzai-pipeline.pokemon.all
 - ALWAYS include LIMIT 100 unless the query is a pure aggregate (COUNT, AVG, SUM, etc.)
 - Never use SELECT * — only select the columns you need
 - Always backtick-escape `Sp_ Atk` and `Sp_ Def` — they contain special characters

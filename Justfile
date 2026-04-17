@@ -1,10 +1,11 @@
 default:
     @just --list
 
-project      := "skeleton-island"
-region       := "us-central1"
-registry     := region + "-docker.pkg.dev/" + project + "/hen-wen"
-state_bucket := project + "-tfstate"
+project      := "banzai-pipeline"
+app          := "hen-wen"
+region       := "us-east1"
+registry     := region + "-docker.pkg.dev/" + project + "/" + app
+state_bucket := project + "-" + app + "-tfstate"
 
 # First-time bootstrap: create state bucket, provision infra, set secret, deploy
 bootstrap:
@@ -12,18 +13,18 @@ bootstrap:
         --project={{project}} \
         --location={{region}} \
         --uniform-bucket-level-access
-    cd infrastructure && terraform init -backend-config="bucket={{state_bucket}}"
-    cd infrastructure && terraform apply
+    cd infra && terraform init -backend-config="bucket={{state_bucket}}"
+    cd infra && terraform apply
     just set-secret
     just deploy
 
 # Re-init terraform (fresh clone or new machine)
 init:
-    cd infrastructure && terraform init -backend-config="bucket={{state_bucket}}"
+    cd infra && terraform init -backend-config="bucket={{state_bucket}}"
 
 # Provision / update infrastructure
 infra:
-    cd infrastructure && terraform apply
+    cd infra && terraform apply
 
 # Build and deploy both services
 deploy: deploy-backend deploy-frontend
@@ -65,9 +66,9 @@ set-secret:
 
 # Tear down all infrastructure then delete the state bucket
 destroy:
-    cd infrastructure && terraform destroy
+    cd infra && terraform destroy
     gcloud storage rm -r gs://{{state_bucket}} --project={{project}}
 
 # Print deployed URLs
 urls:
-    cd infrastructure && terraform output
+    cd infra && terraform output

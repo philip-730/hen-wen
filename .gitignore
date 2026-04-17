@@ -17,11 +17,10 @@ backend/**/__pycache__/
 backend/**/*.pyc
 
 # Terraform
-infrastructure/.terraform/
-infrastructure/.terraform.lock.hcl
-infrastructure/terraform.tfvars
-infrastructure/*.tfstate
-infrastructure/*.tfstate.backup
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/*.tfstate
+infra/*.tfstate.backup
 
 # Docker
 backend/.dockerignore
